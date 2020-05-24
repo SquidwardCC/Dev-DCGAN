@@ -1,2 +1,2 @@
 # Dev-DCGAN
- An experimental DCGAN with pytorch
+ An experimental DCGAN with pytorch. 
