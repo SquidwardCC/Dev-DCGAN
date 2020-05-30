@@ -7,13 +7,17 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter 
 from model_utils import Discriminator, Generator
+import os
+
+if not os.path.exists("checkpoints"):
+    os.mkdir("checkpoints")
 
 lr = 0.0001
 batch_size = 150
 image_size = 128
 channels_img = 3
 channels_noise = 256
-num_epochs = 100000
+num_epochs = 1000
 features_d = 32
 features_g = 32
 
@@ -29,7 +33,7 @@ def save():
     torch.save(optimizerD.state_dict(), f'checkpoints/optD')
     torch.save(optimizerG.state_dict(), f'checkpoints/optG')
 
-dataset = datasets.ImageFolder(root='C:\\Users\\MemeMaster\\Desktop\\r34_bot', transform=my_transform)
+dataset = datasets.ImageFolder(root='datain', transform=my_transform)
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
