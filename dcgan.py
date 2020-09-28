@@ -12,8 +12,9 @@ import os
 if not os.path.exists("checkpoints"):
     os.mkdir("checkpoints")
 
+iterative_checkpoint = True
 lr = 0.0001
-batch_size = 150
+batch_size = 200
 image_size = 128
 channels_img = 3
 channels_noise = 256
@@ -27,11 +28,13 @@ my_transform = transforms.Compose([
     transforms.Normalize((0.5,), (0.5,)),
     ])
 
-def save():
-    torch.save(netD.state_dict(), f'checkpoints/netD')
-    torch.save(netG.state_dict(), f'checkpoints/netG')
-    torch.save(optimizerD.state_dict(), f'checkpoints/optD')
-    torch.save(optimizerG.state_dict(), f'checkpoints/optG')
+def save(iteration):
+    iter_dir = "checkpoints/"+str(iteration)
+    os.makedirs(iter_dir, exist_ok=True)
+    torch.save(netD.state_dict(), f'{iter_dir}/netD')
+    torch.save(netG.state_dict(), f'{iter_dir}/netG')
+    torch.save(optimizerD.state_dict(), f'{iter_dir}/optD')
+    torch.save(optimizerG.state_dict(), f'{iter_dir}/optG')
 
 dataset = datasets.ImageFolder(root='datain', transform=my_transform)
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
@@ -112,6 +115,10 @@ def train(resume=False, init_epoch=0):
                 img_grid_fake = torchvision.utils.make_grid(fake[:32], normalize=True)
                 writer_real.add_image('Real Images', img_grid_real)
                 writer_real.add_image('Fake Images', img_grid_fake)
-        save()
+                
+        if iterative_checkpoint:
+            save(epoch)
+        else:
+            save("recent")
 
 train(resume=False, init_epoch=0)
