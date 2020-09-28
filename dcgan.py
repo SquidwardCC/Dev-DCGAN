@@ -55,8 +55,8 @@ real_label = 1
 fake_label = 0
 
 fixed_noise = torch.randn(64, channels_noise, 1, 1).to(device)
-writer_real = SummaryWriter(f'runs/bonk/test_real')
-writer_fake = SummaryWriter(f'runs/bonk/test_fake')
+writer_real = SummaryWriter(f'runs/training/test_real')
+writer_fake = SummaryWriter(f'runs/training/test_fake')
 
 def train(resume=False, init_epoch=0):
     print("Training")
@@ -114,4 +114,4 @@ def train(resume=False, init_epoch=0):
                 writer_real.add_image('Fake Images', img_grid_fake)
         save()
 
-train(resume=True, init_epoch=185)
+train(resume=False, init_epoch=0)
