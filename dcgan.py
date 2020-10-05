@@ -14,7 +14,7 @@ if not os.path.exists("checkpoints"):
 
 iterative_checkpoint = True
 lr = 0.0001
-batch_size = 200
+batch_size = 150
 image_size = 128
 channels_img = 3
 channels_noise = 256
@@ -65,15 +65,24 @@ def train(resume=False, init_epoch=0):
     print("Training")
 
     if resume == True:
+        if iterative_checkpoint == True:
+            path = "checkpoints/" + str(init_epoch) + "/"
+        else:
+            path = "checkpoints/recent/"
         print("Loading from saved models...")
-        netD.load_state_dict(torch.load(f'checkpoints/netD'))
-        netG.load_state_dict(torch.load(f'checkpoints/netG'))
-        optimizerD.load_state_dict(torch.load(f'checkpoints/optD'))
-        optimizerG.load_state_dict(torch.load(f'checkpoints/optG'))
+        netD.load_state_dict(torch.load(f'{path}netD'))
+        print("Loaded:", f'{path}netD')
+        netG.load_state_dict(torch.load(f'{path}netG'))
+        print("Loaded:", f'{path}netG')
+        optimizerD.load_state_dict(torch.load(f'{path}optD'))
+        print("Loaded:", f'{path}optD')
+        optimizerG.load_state_dict(torch.load(f'{path}optG'))
+        print("Loaded:", f'{path}optG')
 
 
 
-    for epoch in range(num_epochs-init_epoch):
+    for x in range(num_epochs):
+        epoch = x + init_epoch
         for batch_idx, (data, targets) in enumerate(dataloader):
             data = data.to(device)
             batch_size = data.shape[0]
@@ -105,7 +114,7 @@ def train(resume=False, init_epoch=0):
             optimizerG.step()
 
             if batch_idx % 5 == 0:
-                print(f'Epoch [{epoch+init_epoch}/{num_epochs-init_epoch}] Batch {batch_idx}/{len(dataloader)} \
+                print(f'Epoch [{epoch}/{num_epochs}] Batch {batch_idx}/{len(dataloader)} \
                       Loss D: {lossD:.4f}, loss G: {lossG:.4f} D(x): {D_x:.4f}')
 
             with torch.no_grad():
@@ -121,4 +130,4 @@ def train(resume=False, init_epoch=0):
         else:
             save("recent")
 
-train(resume=False, init_epoch=0)
+train(resume=True, init_epoch=169)
